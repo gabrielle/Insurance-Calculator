@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <link rel="stylesheet" href="./jquery-ui-1.11.4.custom/jquery-ui.css">  
+  <script src="./jquery-ui-1.11.4.custom/jquery-1.9.1.min.js"></script>
+  <script src="./jquery-ui-1.11.4.custom/jquery-ui.min.js"></script>  
+  
+	<style type="text/css">
+	
+		body{
+		width:70%;
+		}
+		
+		.container{
+			width:90%;
+			height: 350px;
+		
+		}
+		
+		.container input, .container select{
+			width:80%;
+		}
+		
+		.bldg{
+		width:50%;
+		}
+		.bldg input, .bldg select{
+		width:100%
+		}
+		
+		table td{
+		padding:8px;
+		}
+		
+		#totals td{
+		padding:3px;
+		padding-right:5px;
+		}
+		
+		
+		
+	</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#tabs").tabs();       
+    });
+	
+	$(function() {
+    $( ".datepicker" ).datepicker();
+	});
+    </script>
+
+<script type="text/javascript">
+
+	function numberWithCommas(x) {
+			return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+		} <!--format currency output-->
+		
+		var prem1;
+		var tax1;
+		var basic;
+		var rate;
+		var tax;
+		var taxrate;
+	
+		<!--calculate age from DOB-->
+	function getAge(x,dateString) {
+	
+		var today = new Date();
+		var birthDate = new Date(document.getElementById(x).value);
+		var age = today.getFullYear() - birthDate.getFullYear();
+		var m = today.getMonth() - birthDate.getMonth();
+		if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+			age--;
+		}
+		return age;
+		
+	}
+	
+		<!--calculate premium-->
+	function getPrem(){
+		
+		var sumins = document.getElementById("sumins").value;
+		var total = document.getElementById("total");
+		var taxtotal = 0;
+		var age = getAge("datepicker1");
+		
+		<!-- conditional statement to calculate tax -->
+		if (age >= 60){
+			tax = 0;
+			
+		} else {
+		
+			tax = .06;
+		}
+		<!-- end of statement to calculate tax -->
+		
+		<!-- get rate based on sum insured -->
+		if (sumins >= 500000){
+			rate = .0365;
+			
+		} else {
+			rate = .0565;
+		}
+		<!-- end of if statement to get sum insured -->
+		
+		
+		basic = sumins * rate;
+		tax1 = basic * tax;
+		prem1 = basic;
+		
+			totalprem = prem1 + tax1;
+			taxtotal = tax1;
+			
+			document.getElementById("y1").innerHTML = "Premium :";
+			document.getElementById("pr1").innerHTML = "$" + numberWithCommas(prem1.toFixed(2));
+			document.getElementById("t").innerHTML = "Total : ";
+			document.getElementById("totalprem").innerHTML ="$" + numberWithCommas(totalprem.toFixed(2));
+		
+		document.getElementById("tx").innerHTML = "Tax :";
+		document.getElementById("tamnt").innerHTML = "$" + numberWithCommas(taxtotal.toFixed(2));
+	}
+	
+	function getBuildingPrem(){
+		
+		var sumins = document.getElementById("bldgsumins").value;
+		var total = document.getElementById("bldgtotal");
+		var age = getAge("datepicker2");
+		
+		if (age >= 60){
+			taxrate = 0;
+		}
+		
+		else {
+			taxrate = .06;
+		}
+		
+		if (sumins <= 3000000){
+			rate=.00325;
+		}
+		
+		else
+		rate = .00285;
+		
+		prem = sumins * rate;
+		
+		
+		
+			pretax = prem;
+			tax = pretax * taxrate;
+			
+		totalprem = pretax + tax;
+		
+			document.getElementById("title1").innerHTML = "Premium Before Tax  ";
+			document.getElementById("bldgtax").innerHTML = "Tax : ";
+			document.getElementById("bldgpretax").innerHTML = "Total Before Tax: ";
+			document.getElementById("bldgmult").innerHTML = "Total : ";
+			document.getElementById("p2").innerHTML = "$" + numberWithCommas(pretax.toFixed(2));
+			document.getElementById("p3").innerHTML = "$" + numberWithCommas(tax.toFixed(2));
+			document.getElementById("p4").innerHTML = "$" + numberWithCommas(totalprem.toFixed(2));
+			
+	}
+	
+	function getForcedPrem(){
+		
+		var sumins = document.getElementById("bldgsumins2").value;
+		var age = getAge("datepicker3");
+		
+		if (age >= 60){
+			taxrate = 0;
+		}
+		
+		else {
+			taxrate = .06;
+		}
+		
+		rate = .00250;
+		
+		prem = sumins * rate;
+		tax = prem * taxrate;
+		totalprem = tax +  prem;
+		
+		
+		document.getElementById("bldgprem1").innerHTML = "Premium : $" + numberWithCommas(prem.toFixed(2));
+		document.getElementById("bldgprem2").innerHTML = "Tax : $" + numberWithCommas(tax.toFixed(2));
+		document.getElementById("bldgprem3").innerHTML = "Total   : $" + numberWithCommas(totalprem.toFixed(2));
+	
+	}
+
+
+</script>
+</head>
+
+<body>
+<title>Insurance Premium Calculator</title>
+<img height="20%" width="20%" src="./assets/logo.png"/>
+<h2 style="color:red; font-family: Verdana;"><center>Insurance Premium Calculator</center></h2>
+<br>
+
+<div id="tabs">
+<ul>
+    <li><a href="#content">Motor</a></li>
+    <li><a href="#content2">Property</a></li>
+	<li><a href="#content3">Force Placed Property</a></li>
+</ul>
+
+<div id="content" class="container">
+		<div id="table1" style="width:50%; float:left;">
+		<table>	
+			<tr><td>Sum Insured : </td>
+				<td><input type="text" name="sumins" id="sumins"></td></tr>
+				<tr><td>Date of Birth : </td><td><input type="text" id="datepicker1" class="datepicker"></td></tr>
+				<br><br>
+				</table>
+				<br>
+				<tr><td><button onclick="getPrem()">Calculate Premium</button></td></tr>
+				</div>
+			<br> 
+			<div id="table2">
+				<table id="totals" width="40%" style="float:right;">
+				<tr id="1"><td id="y1"></td><td id="pr1"></td></tr>
+				<tr><td id="tx"><td id="tamnt"></tr>
+				<tr><td id="t" style="font-weight:bold;"></td><td id="totalprem" style="font-weight:bold;"></td></tr>
+				</table>
+
+				<p id="prem"></p> 
+		
+			</div>
+	</div>
+	
+	<div id="content2" class="container">
+		
+		<table class="bldg" width="90%">		<!-- Form Table -->
+		<tr><td>Sum Insured : <td><input type="text" name="bldgsumins" id="bldgsumins"></td></tr>
+		
+		<tr><td>Date of Birth : </td><td><input type="text" id="datepicker2" class="datepicker"></tr>
+
+		<tr><td><button onclick="getBuildingPrem()">Calculate Premium</button></td></tr>
+		</table> <!--end of Form Table -->
+		
+		<table><!-- start of prem table -->
+		
+		<tr><td id="title1" style="font-weight:bold;"><td></td></tr>
+		<tr><td id="bldgpretax"><td id="p2"></tr>
+		<tr><td id="bldgtax"><td id="p3"></tr>
+		<tr style="font-weight:bold;"><td id="bldgmult"><td id="p4"></tr>
+		
+		</table><!-- end of prem table -->
+		
+		<p id="bldgprem"></p> 	
+		
+		
+	</div>
+	<div id="content3" class="container">
+		<table class="bldg">		
+		<tr><td>Sum Insured : <td><input type="text" name="bldgsumins" id="bldgsumins2"></td></tr>
+		<tr><td>Date of Birth : </td><td><input type="text" id="datepicker3" class="datepicker"></tr>
+
+		<tr><td><button onclick="getForcedPrem()">Calculate Premium</button></td></tr>
+		</table>
+		<br>
+		
+		<table>
+			<tr><td id="bldgprem1"> </td></tr>
+			<tr><td id="bldgprem2"> </td></tr>
+			<tr><td id="bldgprem3"> </td></tr>
+		</table>
+	</div>
+
+</div>
+</body>
+</html>
